@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Implements hook_entity_info().
+ */
+function codpostal_entity_info() {
+  return array(
+    'codigo_postal' => array(                 // DEFINO LA ENTIDAD codigo_postal. Este nombre condiciona p ej. los nombres de las funciones entity_
+      'label' => 'Códigos postales',
+      'entity class' => 'Entity',
+      'controller class' => 'EntityAPIController',
+      'base table' => 'codpostal_codigos',    // nombre de la tabla mysql creada en el .install ($schema['codpostal_codigos'])
+      'fieldable' => FALSE,
+      'access callback' => 'codpostal_access',
+      'label callback' => 'codpostal_label',
+      'admin ui' => array(                    // explicación en: https://www.drupal.org/node/1021576
+        'path' => 'admin/content/codigos',
+        'file' => 'codpostal.admin.inc'
+      ),
+      'entity keys' => array ('id' => 'cid'),
+      'module' => 'codpostal'
+    )
+  );
+}
+
+
+/**
+ * ToDo. Otorga accesos a quienes pueden operar sobre codigos postales.
+ */
+function codpostal_access() {
+	return TRUE;
+}
+
+/**
+ * Determina cuál de todos los campos de la entidad es la etiqueta.
+ */
+function codpostal_label($codigo_postal){
+	if (isset($codigo_postal->codigo)){
+		return 'Código: '. $codigo_postal->codigo;
+	}
+	else{
+		return "Sin código asignado.";
+	}
+}
+
+
+/*
+ * Implements hook_admin_menu_output_build
+ * Si por ejemplo quisiera añadir un menú personalizado...
+ */
+/*function codpostal_admin_menu_output_build(&$content) {
+  dsm($content);
+
+  if (isset($content['menu']['admin/content'])) {
+    $content['menu']['admin/content']['miguel'] = array(
+      '#title' => 'Gestión de códigos', 
+      '#access' => user_access('administer site configuration'), 
+      '#href' => 'admin/content/codigos',
+    );
+  }
+}*/
+
+/*
+ * Implements hook_admin_menu_output_alter
+ * Para arreglar el título de Códigos postales!
+ */
+function codpostal_admin_menu_output_alter(&$content){
+  if ( isset($content['menu']['admin/content']['admin/content/codigos']) ){
+    $content['menu']['admin/content']['admin/content/codigos']['#title'] = 'Códigos postales';
+  }
+}
+
+
+
+
